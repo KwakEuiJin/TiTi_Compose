@@ -32,79 +32,102 @@ class MainActivity : ComponentActivity() {
             TiTi_ComposeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF73B5D8)) {
-                    BottomNavigationScreens()
+                    BottomNavigationScreens(viewModel)
                 }
             }
-        }
-    }
-
-
-    @Composable
-    fun Greeting(name: String) {
-        Text(text = "Hello $name!")
-    }
-
-    // 초를 "mm:ss" 형식의 문자열로 변환하는 확장 함수
-    fun Int.toTimeString(): String {
-        val minutes = this / 60
-        val seconds = this % 60
-        return "%02d:%02d".format(minutes, seconds)
-    }
-
-    @OptIn(ExperimentalPagerApi::class)
-    @Composable
-    fun BottomNavigationScreens() {
-        val pagerState = rememberPagerState()
-        val coroutineScope = rememberCoroutineScope()
-
-        Scaffold(
-            bottomBar = {
-                BottomNavigation {
-                    val navItems = listOf("Timer", "Stopwatch", "Todo", "Log", "Setting")
-                    navItems.forEachIndexed { index, label ->
-                        BottomNavigationItem(
-                            icon = {
-                                when (index) {
-                                    0 -> Icon(Icons.Filled.Home, contentDescription = null)
-                                    1 -> Icon(Icons.Filled.Person, contentDescription = null)
-                                    2 -> Icon(Icons.Filled.List, contentDescription = null)
-                                    3 -> Icon(Icons.Filled.Person, contentDescription = null)
-                                    else -> Icon(Icons.Filled.Settings, contentDescription = null)
-                                }
-                            },
-                            label = {
-                                Text(
-                                    text = label,
-                                    fontSize = 10.sp
-                                )
-                            },
-                            selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
-                        )
-                    }
-                }
-            }
-        ) { innerPadding ->
-            HorizontalPager(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .background(Color(0xFF73B5D8)),
-                count = 2,
-                state = pagerState
-            ) { page ->
-                when (page) {
-                    0 -> com.timertiti.titi_compose.TimerScreen(viewModel)
-                    1 -> TimerScreen(viewModel)
-                }
-            }
-        }
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun DefaultPreview() {
-        TiTi_ComposeTheme {
-            BottomNavigationScreens()
         }
     }
 }
+
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun BottomNavigationScreens(viewModel:TimerViewModel) {
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(
+        bottomBar = {
+            BottomNavigation {
+                val navItems = listOf("Timer", "Stopwatch", "Todo", "Log", "Setting")
+                navItems.forEachIndexed { index, label ->
+                    BottomNavigationItem(
+                        icon = {
+                            when (index) {
+                                0 -> Icon(Icons.Filled.Home, contentDescription = null)
+                                1 -> Icon(Icons.Filled.Person, contentDescription = null)
+                                2 -> Icon(Icons.Filled.List, contentDescription = null)
+                                3 -> Icon(Icons.Filled.Person, contentDescription = null)
+                                else -> Icon(Icons.Filled.Settings, contentDescription = null)
+                            }
+                        },
+                        label = {
+                            Text(
+                                text = label,
+                                fontSize = 10.sp
+                            )
+                        },
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        HorizontalPager(
+            modifier = Modifier
+                .padding(innerPadding)
+                .background(Color(0xFF73B5D8)),
+            count = 2,
+            state = pagerState
+        ) { page ->
+            when (page) {
+                0 -> TimerScreen(viewModel)
+                1 -> TimerScreen(viewModel)
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    TiTi_ComposeTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = Color(0xFF73B5D8)) {
+            BottomNavigationScreens(TimerViewModel())
+        }
+    }
+}
+
+/*
+class TestViewModel(~~): TestUserProfile,TestMenu,~~
+
+interface TestUserProfile {
+  val user: MutableStateFlow<User>
+  fun onClickPoint()
+}
+
+interface TestMenu {
+  val user: MutableStateFlow<User>
+  val menuList: StateFlow<MutableList<MenuItem>>
+  fun onClickMenuItem(position:Int)
+}
+
+@Preview
+@Composable
+fun TestPreview() {
+  TestView(TestUserProfileMock(),TestMenuMock())
+}
+
+
+@Composable
+fun TestViewContent() {
+  val viewModel = getViewModel<TestViewModel>()
+  TestView(
+    viewModel as TestUserProfile,
+    viewModel as TestMenu
+  )
+}
+
+*/
